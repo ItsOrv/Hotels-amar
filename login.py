@@ -17,7 +17,7 @@ def login_to_site(driver):
 
     captcha_input = input('Input captcha: ')
     captcha_input_field = WebDriverWait(driver, 10).until(
-        EC.presence_of_element_located((By.XPATH, '/html/body/form/div[3]/div[2]/div/div[4]/div/div[3]/div[2]/div/div/div[4]/input')))
+        EC.presence_of_element_located((By.XPATH, '/html/body/form/div[3]/div[2]/div/div[4]/div/div[3]/div[2]/div/div/div[3]/input')))
     captcha_input_field.send_keys(captcha_input)
     submit_button = WebDriverWait(driver, 10).until(
         EC.presence_of_element_located((By.XPATH, '/html/body/form/div[3]/div[2]/div/div[4]/div/div[3]/div[2]/div/div/div[5]/input')))
