@@ -3,8 +3,8 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 import time
 import algorithms
+from config import DATE_FILE
 
-DATE_FILE = "date.txt"
 
 
 def register_amar(driver):
