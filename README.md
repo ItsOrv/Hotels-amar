@@ -14,12 +14,42 @@ This project is designed to automate the process of registering random statistic
 
 To run this project, you need the following Python libraries:
 
-- `selenium`
-- `webdriver-manager`
-- `python-dateutil`
+- `selenium==4.11.2`
+- `webdriver-manager==3.8.6`
+- `python-dateutil==2.8.2`
 
 You can install the required libraries using the following command:
 
 ```bash
 pip install -r requirements.txt
 ```
+
+## Installation and Usage
+
+1. **Clone the Repository:**
+
+   ```bash
+   git clone https://github.com/ItsOrv/Hotels-amar.git
+   cd Hotels-amar
+   ```
+
+2. **Set Up a Virtual Environment:**
+
+   ```bash
+   python -m venv venv
+   source venv/bin/activate  # On Windows use `venv\Scripts\activate`
+   ```
+
+3. **Install Requirements:**
+
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+4. **Run the Script:**
+
+   ```bash
+   python main.py
+   ```
+
+   Follow the prompts to enter the Email, number, captcha, and code for login. The script will then proceed to input the generated statistics into the website.
