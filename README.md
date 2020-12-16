@@ -53,3 +53,29 @@ pip install -r requirements.txt
    ```
 
    Follow the prompts to enter the Email, number, captcha, and code for login. The script will then proceed to input the generated statistics into the website.
+
+## Future Updates
+
+### Telegram Bot Integration
+
+In future updates, I plan to integrate a Telegram bot to manage and monitor the registration process. The bot will allow you to:
+
+- **Start/Stop the Data Entry Process:** Control the execution of the script via Telegram commands.
+- **Receive Updates and Logs:** Get real-time updates and logs about the data entry process.
+
+### Docker Setup
+
+We will also be adding Docker support to simplify the deployment and management of the project. The Docker setup will include:
+
+- **Docker Compose Configuration:** For setting up the environment and dependencies.
+- **Automated Deployment:** A streamlined process to deploy the project in a Docker container, making it easier to run and manage.
+
+## Disclaimer
+
+**This project is intended for testing and educational purposes only.** The use of this script and the interaction with any websites or services is at your own risk. The author does not take any responsibility for any potential issues or damages that may arise from the use of this software. 
+
+By using this project, you acknowledge that you understand the risks involved and agree to use it responsibly and in accordance with any relevant terms and conditions of the websites or services involved.
+
+## Contributing
+
+Contributions to the project are welcome! Please submit a pull request or open an issue to discuss improvements or report bugs.
