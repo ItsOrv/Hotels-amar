@@ -4,6 +4,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 import time
 from config import DATE_FILE
 from data_handler import read_date_file, write_date_file
+from exceptions import RegistrationError
 import algorithms
 
 
@@ -11,8 +12,7 @@ def register_amar(driver):
     """ثبت آمار در سایت."""
     dates = read_date_file(DATE_FILE)
     if not dates:
-        print("date file is empty, nothing to register")
-        return
+        raise RegistrationError("date file is empty, nothing to register")
 
     # the date file is the work queue: clear it now and put back only the rows that fail
     open(DATE_FILE, "w").close()

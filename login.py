@@ -2,6 +2,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 import time
+from exceptions import LoginError
 
 def login_to_site(driver):
     try:
@@ -39,7 +40,7 @@ def login_to_site(driver):
 
         time.sleep(6)
     except Exception as e:
-        raise Exception(f"Login failed: {e}")
+        raise LoginError(f"Login failed: {e}")
 
 def open_amar_page(driver):
     try:
