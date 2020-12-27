@@ -1,32 +1,29 @@
 from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
-import random
 import time
 from config import DATE_FILE
+from data_handler import read_date_file, write_date_file
 import algorithms
 
 
 def register_amar(driver):
     """ثبت آمار در سایت."""
-    count = 0
-    while True:
-        line = None
+    dates = read_date_file(DATE_FILE)
+    if not dates:
+        print("date file is empty, nothing to register")
+        return
+
+    # the date file is the work queue: clear it now and put back only the rows that fail
+    open(DATE_FILE, "w").close()
+
+    failed = []
+    for line in dates:
         try:
             wait = WebDriverWait(driver, 10)
-            element = wait.until(EC.element_to_be_clickable((By.ID, "ctl00_ContentPlaceHolder1_lnk_register"))) 
-            element.click() 
-            with open(DATE_FILE) as file: 
-                lines = file.readlines()  
-                if count < len(lines):  
-                    line = lines[count].strip()  
-                else:
-                    break  
-            
-            # random values
-            # اگر مقدار رندوم برابر با رندوم بود از فانکشن رندوم مقادیر رو بگیر و ریترن کن
-            
+            element = wait.until(EC.element_to_be_clickable((By.ID, "ctl00_ContentPlaceHolder1_lnk_register")))
+            element.click()
+
             eghamat_random, vorod_random, khoroj_random, otagh_random = algorithms.random_numbers(
             eghamat_min=1,
             eghamat_max=10,
@@ -86,16 +83,15 @@ def register_amar(driver):
             close_element = wait.until(EC.element_to_be_clickable((By.XPATH, '/html/body/form/div[3]/div[2]/div/input')))
             close_element.click()
             print(line)
-            count += 1
 
             # wait for new sabt
             time.sleep(2)
-
-            # add error lines to date file to sabt them again
         except Exception as error:
+            # keep the row so it gets retried on the next run instead of being lost
             print(f"An unexpected error occurred: {error}")
-            if line:
-                with open(DATE_FILE, 'a') as file_to_write:
-                    file_to_write.write(line + '\n')
+            failed.append(line)
             continue
+
+    if failed:
+        write_date_file(DATE_FILE, failed)
 
