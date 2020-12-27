@@ -22,14 +22,14 @@ def main():
     login.login_to_site(driver)
 
     #  دریافت اطلاعات ثبت نشده از فایل یا اسکرپینگ
-    scraper.choose_date_file(driver)
+    scraper.choose_date_file()
 
     # رفتن به صفحه ثبت امار
     login.open_amar_page(driver)
 
     # انتخاب روش ساخت اعداد رندوم
-    # شروع ثبت 
-    registration.sabt()
+    # شروع ثبت
+    registration.register_amar(driver)
 
 if __name__ == "__main__":
     main()
