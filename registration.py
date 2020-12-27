@@ -14,7 +14,7 @@ def register_amar(driver):
     count = 0
     while True:
         try:
-            wait = driver(driver, 10000)
+            wait = WebDriverWait(driver, 10)
             element = wait.until(EC.element_to_be_clickable((By.ID, "ctl00_ContentPlaceHolder1_lnk_register"))) 
             element.click() 
             with open(DATE_FILE) as file: 
