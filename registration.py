@@ -7,12 +7,12 @@ import time
 from config import DATE_FILE
 import algorithms
 
-eghamat_min, eghamat_max, vorod_min, vorod_max, khoroj_min, khoroj_max, otagh_min, otagh_max = algorithms.choose_rand()
 
 def register_amar(driver):
     """ثبت آمار در سایت."""
     count = 0
     while True:
+        line = None
         try:
             wait = WebDriverWait(driver, 10)
             element = wait.until(EC.element_to_be_clickable((By.ID, "ctl00_ContentPlaceHolder1_lnk_register"))) 
@@ -94,7 +94,8 @@ def register_amar(driver):
             # add error lines to date file to sabt them again
         except Exception as error:
             print(f"An unexpected error occurred: {error}")
-            with open(DATE_FILE, 'a') as file_to_write:
-                file_to_write.write(line + '\n')
+            if line:
+                with open(DATE_FILE, 'a') as file_to_write:
+                    file_to_write.write(line + '\n')
             continue
 
