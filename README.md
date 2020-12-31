@@ -1,81 +1,118 @@
 # Automatic Random Statistics Registration
 
+A Selenium-based automation script that logs into Iran's Hotel Management System
+(`myst.mcth.ir`) and submits the daily hotel statistics report for a list of
+dates, filling each form with random but realistic values.
+
+> ⚠️ **Old practice project.** This was written as a learning exercise. It is
+> not production-ready — some pieces are still unfinished (see [TODO.md](TODO.md))
+> and the form is driven by brittle absolute XPaths. Use it for testing and
+> educational purposes only.
+
 ## Overview
 
-This project is designed to automate the process of registering random statistics on the (Hotel Management System) website of iran. The script uses Selenium to interact with the website and input data for various statistical parameters. The data is generated randomly within specified ranges and distributed across days within each month, ensuring accurate and realistic entries.
+The daily statistics form on the portal has to be filled in by hand, one day at
+a time. This script automates that: it reads a queue of dates, and for each one
+it opens the registration form, generates random values for every field, types
+them in, and submits.
 
-## Features
+The numbers it enters (`eghamat` / occupancy, `vorod` / check-ins,
+`khoroj` / check-outs, `otagh` / rooms) are random within fixed ranges, so the
+result looks like plausible day-to-day activity rather than constant values.
 
-- **Automated Data Entry:** The script logs into the website and navigates to the appropriate page to input statistical data.
-- **Random Data Generation:** Generates random values for different parameters (e.g., `eghamat`, `vorod`, `khoroj`, `otagh`) based on user-defined ranges and distributions.
-- **Date Handling:** Supports generating and handling dates in the format `1402/03/03` and ensures that data for all days within the specified range is processed.
+## How it works
+
+1. **Login** — Chrome opens the login page; you are prompted in the terminal for
+   email, phone number, captcha, and the verification code.
+2. **Date queue** — dates to register are read from `date.txt`, one per line, in
+   the format `1402/03/03`.
+3. **Registration** — for each date the script opens the form, fills in random
+   values, sets the date, and submits.
+4. **Retry on failure** — `date.txt` acts as the work queue. It is cleared at the
+   start of a run, and any rows that fail are written back so the next run
+   retries only those.
+
+## Project structure
+
+| File              | Responsibility                                              |
+| ----------------- | ----------------------------------------------------------- |
+| `main.py`         | Entry point — wires up the browser and the steps below      |
+| `config.py`       | Paths (ChromeDriver, Chromium, `date.txt`, log file)        |
+| `login.py`        | Logs into the portal and opens the statistics page          |
+| `registration.py` | Fills and submits the daily form for each date              |
+| `algorithms.py`   | Random number generation                                   |
+| `scraper.py`      | Asks whether to use `date.txt` or scrape dates *(WIP)*      |
+| `data_handler.py` | Reads/writes the `date.txt` queue                           |
+| `exceptions.py`   | `LoginError`, `RegistrationError`                           |
 
 ## Requirements
 
-To run this project, you need the following Python libraries:
-
-- `selenium==4.11.2`
-- `webdriver-manager==3.8.6`
-- `python-dateutil==2.8.2`
-
-You can install the required libraries using the following command:
-
-```bash
-pip install -r requirements.txt
-```
+- Python 3.10+
+- Google Chrome / Chromium and a matching ChromeDriver
+- Python libraries:
+  - `selenium==4.11.2`
+  - `webdriver-manager==3.8.6`
+  - `python-dateutil==2.8.2`
 
 ## Installation and Usage
 
-1. **Clone the Repository:**
+1. **Clone the repository:**
 
    ```bash
    git clone https://github.com/ItsOrv/Hotels-amar.git
    cd Hotels-amar
    ```
 
-2. **Set Up a Virtual Environment:**
+2. **Set up a virtual environment:**
 
    ```bash
    python -m venv venv
    source venv/bin/activate  # On Windows use `venv\Scripts\activate`
    ```
 
-3. **Install Requirements:**
+3. **Install requirements:**
 
    ```bash
    pip install -r requirements.txt
    ```
 
-4. **Run the Script:**
+4. **Configure paths** — edit `config.py` so `CHROMEDRIVER_PATH` and
+   `CHROMIUM_PATH` point at your local Chrome/ChromeDriver install.
+
+5. **Add dates** — create a `date.txt` file in the project root with one date
+   per line (e.g. `1402/03/03`).
+
+6. **Run the script:**
 
    ```bash
    python main.py
    ```
 
-   Follow the prompts to enter the Email, number, captcha, and code for login. The script will then proceed to input the generated statistics into the website.
+   Follow the terminal prompts to enter the email, number, captcha, and
+   verification code. The script then registers the statistics for each date.
 
 ## Future Updates
 
-### Telegram Bot Integration
+- **Telegram bot integration** — start/stop the process and receive progress
+  updates and logs via Telegram commands.
+- **Docker setup** — a `docker-compose` configuration for easier deployment.
+- **Real logging** — `config.LOG_FILE` is defined but not yet used; replace the
+  `print` calls with proper logging.
+- **Date scraper** — let the script scrape pending dates instead of relying on a
+  hand-written `date.txt`.
 
-In future updates, I plan to integrate a Telegram bot to manage and monitor the registration process. The bot will allow you to:
-
-- **Start/Stop the Data Entry Process:** Control the execution of the script via Telegram commands.
-- **Receive Updates and Logs:** Get real-time updates and logs about the data entry process.
-
-### Docker Setup
-
-We will also be adding Docker support to simplify the deployment and management of the project. The Docker setup will include:
-
-- **Docker Compose Configuration:** For setting up the environment and dependencies.
-- **Automated Deployment:** A streamlined process to deploy the project in a Docker container, making it easier to run and manage.
+See [TODO.md](TODO.md) for the full list of unfinished pieces.
 
 ## Disclaimer
 
-**This project is intended for testing and educational purposes only.** The use of this script and the interaction with any websites or services is at your own risk. The author does not take any responsibility for any potential issues or damages that may arise from the use of this software. 
-
-By using this project, you acknowledge that you understand the risks involved and agree to use it responsibly and in accordance with any relevant terms and conditions of the websites or services involved.
+**This project is intended for testing and educational purposes only.** It
+submits randomly generated data into a real web portal; do not point it at any
+system you are not explicitly authorized to use. Use of this script is at your
+own risk — the author takes no responsibility for any issues or damages arising
+from its use. By using it you agree to act responsibly and in accordance with
+the terms and conditions of any service involved.
 
 ## Contributing
 
-Contributions to the project are welcome! Please submit a pull request or open an issue to discuss improvements or report bugs.
+Contributions are welcome! Please open an issue to discuss improvements or
+report bugs, or submit a pull request.
