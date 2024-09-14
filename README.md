@@ -70,6 +70,12 @@ We will also be adding Docker support to simplify the deployment and management 
 - **Docker Compose Configuration:** For setting up the environment and dependencies.
 - **Automated Deployment:** A streamlined process to deploy the project in a Docker container, making it easier to run and manage.
 
+## Disclaimer
+
+**This project is intended for testing and educational purposes only.** The use of this script and the interaction with any websites or services is at your own risk. The author does not take any responsibility for any potential issues or damages that may arise from the use of this software. 
+
+By using this project, you acknowledge that you understand the risks involved and agree to use it responsibly and in accordance with any relevant terms and conditions of the websites or services involved.
+
 ## Contributing
 
 Contributions to the project are welcome! Please submit a pull request or open an issue to discuss improvements or report bugs.
