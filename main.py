@@ -10,10 +10,12 @@ from selenium.webdriver.support.ui import WebDriverWait
 from webdriver_manager.chrome import ChromeDriverManager
 from datetime import datetime, timedelta
 
+
+#sydabrahymkhadmy@gmail.com
 # تعداد روزهای هر ماه شمسی
 days_in_month = {
-    1: 31, 2: 31, 3: 31, 4: 30, 5: 30, 6: 30,
-    7: 30, 8: 30, 9: 30, 10: 30, 11: 29, 12: 29  # در نظر گرفتن سال غیر کبیسه
+    1: 31, 2: 31, 3: 31, 4: 31, 5: 31, 6: 31,
+    7: 30, 8: 30, 9: 30, 10: 30, 11: 30, 12: 29  # در نظر گرفتن سال غیر کبیسه
 }
 
 # تابع تولید تاریخ‌های شمسی
@@ -32,24 +34,39 @@ def generate_dates(start_date, end_date):
 def distribute_random(total, days, min_value, max_value):
     distributed = []
     
+    # Ensure that we can distribute the values within the bounds
+    if days * min_value > total or days * max_value < total:
+        raise ValueError("Cannot distribute the values within the given bounds.")
+    
+    # Base case: when there's only one day left
+    if days == 1:
+        distributed.append(total)
+        return distributed
+    
     for i in range(days - 1):
-        value = random.randint(min_value, max_value)
+        # Calculate the remaining total we can distribute in the remaining days
+        max_possible_for_day = total - (days - len(distributed) - 1) * min_value
+        min_possible_for_day = min_value
+        
+        # Choose a random number between the calculated possible min and max
+        value = random.randint(min_possible_for_day, min(max_value, max_possible_for_day))
         distributed.append(value)
+        
+        # Reduce the total by the chosen value
         total -= value
-
+    
+    # Add the remaining total to the last day
     distributed.append(total)
-
-    if any(value < min_value or value > max_value for value in distributed):
-        return distribute_random(sum(distributed), days, min_value, max_value)
-
+    
     return distributed
+
 
 # مقادیر کلی هر متغیر در هر ماه
 monthly_totals = {
-    'eghamat': {1: 400, 2: 350, 3: 248, 4: 390, 5: 310, 6: 370, 7: 410, 8: 430, 9: 360, 10: 320, 11: 280, 12: 260},
-    'vorod': {1: 200, 2: 180, 3: 160, 4: 190, 5: 150, 6: 170, 7: 210, 8: 220, 9: 180, 10: 160, 11: 140, 12: 130},
-    'khoroj': {1: 180, 2: 160, 3: 140, 4: 170, 5: 130, 6: 150, 7: 190, 8: 200, 9: 160, 10: 140, 11: 120, 12: 110},
-    'otagh': {1: 100, 2: 90, 3: 80, 4: 110, 5: 70, 6: 90, 7: 120, 8: 130, 9: 100, 10: 90, 11: 80, 12: 70},
+    'eghamat': {1: 1140, 2: 930, 3: 900, 4: 820, 5: 750, 6: 1740, 7: 1500, 8: 430, 9: 360, 10: 320, 11: 280, 12: 260},
+    'vorod': {1: 1140, 2: 930, 3: 900, 4: 824, 5: 751, 6: 1748, 7: 210, 8: 220, 9: 180, 10: 160, 11: 140, 12: 130},
+    'khoroj': {1: 1100, 2: 900, 3: 990, 4: 817, 5: 739, 6: 1737, 7: 190, 8: 200, 9: 160, 10: 140, 11: 120, 12: 110},
+    'otagh': {1: 380, 2: 310, 3: 300, 4: 280, 5: 250, 6: 580, 7: 500, 8: 130, 9: 100, 10: 90, 11: 80, 12: 70},
 }
 
 # تولید مقادیر برای هر تاریخ
@@ -63,10 +80,10 @@ def generate_data(start_date, end_date):
         days_in_current_month = days_in_month[month]
 
         # توزیع تصادفی اعداد برای هر روز
-        random_eghamat = distribute_random(monthly_totals['eghamat'][month], days_in_current_month, 5, 20)
-        random_vorod = distribute_random(monthly_totals['vorod'][month], days_in_current_month, 5, 20)
-        random_khoroj = distribute_random(monthly_totals['khoroj'][month], days_in_current_month, 5, 20)
-        random_otagh = distribute_random(monthly_totals['otagh'][month], days_in_current_month, 5, 20)
+        random_eghamat = distribute_random(monthly_totals['eghamat'][month], days_in_current_month, 12, 77)
+        random_vorod = distribute_random(monthly_totals['vorod'][month], days_in_current_month, 12, 77)
+        random_khoroj = distribute_random(monthly_totals['khoroj'][month], days_in_current_month, 12, 77)
+        random_otagh = distribute_random(monthly_totals['otagh'][month], days_in_current_month, 4, 26)
 
         data.append({
             'date': date,
@@ -78,14 +95,19 @@ def generate_data(start_date, end_date):
 
     return data
 
-# تابع اصلی
+start_date = "1403/01/01"
+end_date = "1403/06/22"
+data = generate_data(start_date, end_date)
+print(data)
+
+
+
 def main():
     # تنظیمات Chrome
     chrome_options = Options()
     chrome_options.add_experimental_option("detach", True)  #(امیدوارم) جلوگیری از بسته شدن مرورگر
     driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()), options=chrome_options)
 
-    # صفحه ورود
     driver.get('https://myst.mcth.ir/login.aspx')
     email_input = input('email: ')
     email_input_field = WebDriverWait(driver, 10).until(
@@ -127,8 +149,8 @@ def main():
     time.sleep(6)
 
     # تولید داده‌های تاریخ‌ها و مقادیر
-    start_date = "1402/03/03"
-    end_date = "1402/08/01"
+    start_date = "1403/01/01"
+    end_date = "1403/06/22"
     data = generate_data(start_date, end_date)
 
     # وارد کردن مقادیر در سایت
@@ -137,14 +159,29 @@ def main():
             wait = WebDriverWait(driver, 10000)
             element = wait.until(EC.element_to_be_clickable((By.ID, "ctl00_ContentPlaceHolder1_lnk_register"))) 
             element.click()
-
             time.sleep(1)
-            # وارد کردن مقادیر تصادفی
             wait.until(EC.visibility_of_element_located((By.XPATH, '/html/body/form/div[3]/div/div/div[9]/div[2]/div[3]/div/div[1]/div/div[3]/div[1]/div/div[4]/div[1]/input'))).send_keys(entry['eghamat'])
+            time.sleep(1)
             wait.until(EC.visibility_of_element_located((By.XPATH, '/html/body/form/div[3]/div/div/div[9]/div[2]/div[3]/div/div[1]/div/div[3]/div[1]/div/div[7]/div[1]/input'))).send_keys(entry['vorod'])
+            time.sleep(1)
             wait.until(EC.visibility_of_element_located((By.XPATH, '/html/body/form/div[3]/div/div/div[9]/div[2]/div[3]/div/div[1]/div/div[3]/div[1]/div/div[7]/div[2]/input'))).send_keys(entry['khoroj'])
+            time.sleep(1)
             wait.until(EC.visibility_of_element_located((By.XPATH, '/html/body/form/div[3]/div/div/div[9]/div[2]/div[3]/div/div[1]/div/div[3]/div[1]/div/div[4]/div[3]/input'))).send_keys(entry['otagh'])
             time.sleep(1)
+            wait.until(EC.visibility_of_element_located((By.XPATH, '/html/body/form/div[3]/div/div/div[9]/div[2]/div[3]/div/div[1]/div/div[3]/div[1]/div/div[4]/div[2]/input'))).send_keys("0")
+            time.sleep(1)
+            wait.until(EC.visibility_of_element_located((By.XPATH, '/html/body/form/div[3]/div/div/div[9]/div[2]/div[3]/div/div[1]/div/div[3]/div[1]/div/div[9]/div[1]/input'))).send_keys("0")
+            time.sleep(1)
+            wait.until(EC.visibility_of_element_located((By.XPATH, '/html/body/form/div[3]/div/div/div[9]/div[2]/div[3]/div/div[1]/div/div[3]/div[1]/div/div[9]/div[2]/input'))).send_keys("0")
+            time.sleep(3)
+            wait.until(EC.visibility_of_element_located((By.XPATH, '/html/body/form/div[3]/div/div/div[9]/div[2]/div[3]/div/div[1]/div/div[3]/div[1]/div/div[3]/div/input'))).clear()
+            wait.until(EC.visibility_of_element_located((By.XPATH, '/html/body/form/div[3]/div/div/div[9]/div[2]/div[3]/div/div[1]/div/div[3]/div[1]/div/div[3]/div/input'))).send_keys(entry['date'])
+            #sabt
+            wait.until(EC.element_to_be_clickable((By.XPATH, '/html/body/form/div[3]/div/div/div[9]/div[2]/div[3]/div/div[1]/div/div[3]/div[3]/input[1]'))).click()
+            #close (sabt page)
+            wait.until(EC.element_to_be_clickable((By.XPATH, '/html/body/form/div[3]/div[2]/div/input'))).click()
+            time.sleep(1)
+
         except Exception as e:
             print(f"Error on date {entry['date']}: {e}")
 
