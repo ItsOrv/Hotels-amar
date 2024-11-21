@@ -26,8 +26,6 @@ def main():
     #  دریافت اطلاعات ثبت نشده از فایل یا اسکرپینگ
     scraper.choose_date_file(driver)
 
-    
-
     # رفتن به صفحه ثبت امار
     login.open_amar_page(driver)
 
